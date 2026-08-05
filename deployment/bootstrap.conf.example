@@ -1,0 +1,8 @@
+NODE_ENV=production
+PORT=3100
+APP_BASE_PATH=/campusfix
+KEY_VAULT_URL=https://YOUR-VAULT-NAME.vault.azure.net/
+ENTRA_TENANT_ID=PASTE_DIRECTORY_TENANT_ID_HERE
+ENTRA_CLIENT_ID=PASTE_CAMPUSFIX_API_CLIENT_ID_HERE
+CORS_ORIGINS=https://project-1-backend.eastasia.cloudapp.azure.com
+

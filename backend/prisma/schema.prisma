@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  FACULTY
+  TECHNICIAN
+  ADMIN
+}
+
+enum TicketCategory {
+  HARDWARE
+  SOFTWARE
+  NETWORK
+  ACCOUNT_ACCESS
+  AUDIO_VISUAL
+  OTHER
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id              String     @id @default(cuid())
+  microsoftId     String     @unique
+  email           String     @unique
+  name            String
+  role             Role       @default(STUDENT)
+  isActive         Boolean    @default(true)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  requestedTickets Ticket[]   @relation("RequesterTickets")
+  assignedTickets  Ticket[]   @relation("AssignedTickets")
+  comments         Comment[]
+  auditLogs        AuditLog[]
+}
+
+model Ticket {
+  id                   String          @id @default(cuid())
+  title                String          @db.VarChar(160)
+  description          String          @db.Text
+  room                 String?         @db.VarChar(120)
+  category             TicketCategory  @default(OTHER)
+  priority             TicketPriority  @default(MEDIUM)
+  status               TicketStatus    @default(OPEN)
+  aiReason              String?         @db.VarChar(500)
+  requesterId           String
+  assignedTechnicianId String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  requester             User            @relation("RequesterTickets", fields: [requesterId], references: [id])
+  assignedTechnician    User?           @relation("AssignedTickets", fields: [assignedTechnicianId], references: [id])
+  comments              Comment[]
+  peerRequests          PeerRequest[]
+
+  @@index([requesterId])
+  @@index([assignedTechnicianId])
+  @@index([status, priority])
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  isInternal Boolean  @default(false)
+  ticketId   String
+  authorId   String
+  createdAt  DateTime @default(now())
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [authorId], references: [id])
+
+  @@index([ticketId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  action     String   @db.VarChar(100)
+  entityType String   @db.VarChar(100)
+  entityId   String?  @db.VarChar(191)
+  details    Json?
+  userId     String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model PeerRequest {
+  id                String   @id @default(cuid())
+  externalReference String?  @unique
+  partnerName       String?  @db.VarChar(160)
+  requestType       String   @db.VarChar(100)
+  status            String   @db.VarChar(50)
+  payload           Json?
+  ticketId          String?
+  createdAt         DateTime @default(now())
+  ticket            Ticket?  @relation(fields: [ticketId], references: [id])
+
+  @@index([ticketId])
+}
+

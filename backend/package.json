@@ -1,0 +1,31 @@
+{
+  "name": "campusfix-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/server.js",
+    "start": "node src/server.js",
+    "prisma:generate": "node src/run-with-config.js npx prisma generate",
+    "prisma:migrate": "node src/run-with-config.js npx prisma migrate deploy",
+    "check": "node --check src/server.js"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.6.0",
+    "@azure/keyvault-secrets": "^4.9.0",
+    "@prisma/client": "^6.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jose": "^5.9.6",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

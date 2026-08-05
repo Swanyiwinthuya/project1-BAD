@@ -1,0 +1,25 @@
+[Unit]
+Description=CampusFix AI HelpDesk API
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__SERVICE_USER__
+Group=__SERVICE_USER__
+WorkingDirectory=__APP_DIR__/backend
+EnvironmentFile=/etc/campusfix/bootstrap.conf
+ExecStart=/usr/bin/node __APP_DIR__/backend/src/server.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=__APP_DIR__
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
+

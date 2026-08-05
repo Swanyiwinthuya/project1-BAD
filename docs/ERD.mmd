@@ -1,0 +1,48 @@
+erDiagram
+  USER ||--o{ TICKET : requests
+  USER ||--o{ TICKET : assigned_to
+  USER ||--o{ COMMENT : writes
+  USER ||--o{ AUDIT_LOG : performs
+  TICKET ||--o{ COMMENT : contains
+  TICKET ||--o{ PEER_REQUEST : connects
+
+  USER {
+    string id PK
+    string microsoftId UK
+    string email UK
+    string name
+    enum role
+    boolean isActive
+  }
+  TICKET {
+    string id PK
+    string requesterId FK
+    string assignedTechnicianId FK
+    string title
+    text description
+    string room
+    enum category
+    enum priority
+    enum status
+  }
+  COMMENT {
+    string id PK
+    string ticketId FK
+    string authorId FK
+    text content
+    boolean isInternal
+  }
+  AUDIT_LOG {
+    string id PK
+    string userId FK
+    string action
+    string entityType
+  }
+  PEER_REQUEST {
+    string id PK
+    string ticketId FK
+    string externalReference UK
+    string requestType
+    string status
+  }
+
